@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Azure File</title>
+</head>
+
+<body>
+    <div>
+        <a href="{% url 'web:index' %}">Home</a>
+        <a href="{% url 'web:connect' %}">Connect</a>
+    </div>
+    <div>
+        <form action="{% url 'web:mount' %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Mount">
+        </form>
+    </div>
+</body>
+
+</html>
