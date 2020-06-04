@@ -31,6 +31,28 @@ class AzureStorageShare:
                 files.append(item['name'])
         return directories, files
 
+    def get_directory(self, name):
+        directory = self._client.get_directory_client(name)
+        return AzureStorageDirectory(share=self, name=name, client=directory)
+
+class AzureStorageDirectory:
+    def __init__(self, share, name, client):
+        self.share = share
+        self.name = name
+        self.url = self.share.url + '/' + self.name
+        self._client = client
+        self.directory_path = self._client.directory_path
+
+    def get_directories_and_files(self):
+        directories = {}
+        files = {}
+        for item in self._client.list_directories_and_files():
+            if item['is_directory']:
+                directories[item['name']] = self._client.directory_path + '/' + item['name']
+            else:
+                files[item['name']] = self._client.directory_path + '/' + item['name']
+        return directories, files
+
 storageAccountCache = {}
 
 def get_account(name, key=''):

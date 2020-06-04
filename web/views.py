@@ -39,13 +39,28 @@ def share(request, account_name, share_name):
     }
     return render(request, 'web/share.html', context)
 
-def item(request, account_name, share_name, item_name):
+def file(request, account_name, share_name, file_path):
     context = {
         'account_name': account_name,
         'share_name': share_name,
-        'item_name': item_name
+        'file_path': file_path
     }
-    return render(request, 'web/item.html', context)
+    return render(request, 'web/file.html', context)
+
+def directory(request, account_name, share_name, directory_path):
+    account = azuresdk.get_account(account_name)
+    share = account.get_share(share_name)
+    directory = share.get_directory(directory_path)
+    directories, files = directory.get_directories_and_files()
+    context = {
+        'account_name': account.name,
+        'share_name': share.name,
+        'directory_path': directory.directory_path,
+        'directory_url': directory.url,
+        'directory_dict': directories,
+        'file_dict': files
+    }
+    return render(request, 'web/directory.html', context)
 
 def mount(request):
     return render(request, 'web/mount.html')

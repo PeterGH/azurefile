@@ -8,6 +8,7 @@ urlpatterns = [
     path('connect', views.connect, name='connect'),
     path('account/<account_name>', views.account, name='account'),
     path('account/<account_name>/share/<share_name>', views.share, name='share'),
-    path('account/<account_name>/share/<share_name>/<path:item_name>', views.item, name='item'),
+    path('account/<account_name>/share/<share_name>/file/<path:file_path>', views.file, name='file'),
+    path('account/<account_name>/share/<share_name>/directory/<path:directory_path>', views.directory, name='directory'),
     path('mount/', views.mount, name='mount')
 ]

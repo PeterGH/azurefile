@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Azure File</title>
+</head>
+
+<body>
+    <div>
+        <a href="{% url 'web:index' %}">Home</a>
+        <a href="{% url 'web:connect' %}">Connect</a>
+    </div>
+    <div>
+        <p>{{directory_url}}</p>
+        {% for name, path in directory_dict.items %}
+            <a href="{% url 'web:directory' account_name share_name path %}">{{name}}/</a><br>
+        {% endfor %}
+        {% for name, path in file_dict.items %}
+            <a href="{% url 'web:file' account_name share_name path %}">{{name}}</a><br>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
