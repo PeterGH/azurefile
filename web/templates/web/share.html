@@ -1,24 +1,11 @@
-<!DOCTYPE html>
-<html>
+{% extends "web/base.html" %}
 
-<head>
-    <title>Azure File</title>
-</head>
-
-<body>
-    <div>
-        <a href="{% url 'web:index' %}">Home</a>
-        <a href="{% url 'web:connect' %}">Connect</a>
-    </div>
-    <div>
-        <p>{{share_url}}</p>
-        {% for directory in directory_list %}
-            <a href="{% url 'web:directory' account_name share_name directory %}">{{directory}}/</a><br>
-        {% endfor %}
-        {% for file in file_list %}
-            <a href="{% url 'web:file' account_name share_name file %}">{{file}}</a><br>
-        {% endfor %}
-    </div>
-</body>
-
-</html>
+{% block content %}
+<p>{{share_url}}</p>
+{% for directory in directory_list %}
+    <a href="{% url 'web:directory' account_name share_name directory %}">{{directory}}/</a><br>
+{% endfor %}
+{% for file in file_list %}
+    <a href="{% url 'web:file' account_name share_name file %}">{{file}}</a><br>
+{% endfor %}
+{% endblock content %}

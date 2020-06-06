@@ -1,18 +1,5 @@
-<!DOCTYPE html>
-<html>
+{% extends "web/base.html" %}
 
-<head>
-    <title>Azure File</title>
-</head>
-
-<body>
-    <div>
-        <a href="{% url 'web:index' %}">Home</a>
-        <a href="{% url 'web:connect' %}">Connect</a>
-    </div>
-    <div>
-        <p>{{account_name}} {{share_name}} {{file_path}}</p>
-    </div>
-</body>
-
-</html>
+{% block content %}
+<p>{{account_name}} {{share_name}} {{file_path}}</p>
+{% endblock content %}

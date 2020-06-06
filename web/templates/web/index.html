@@ -1,22 +1,9 @@
-<!DOCTYPE html>
-<html>
+{% extends "web/base.html" %}
 
-<head>
-    <title>Azure File</title>
-</head>
-
-<body>
-    <div>
-        <a href="{% url 'web:index' %}">Home</a>
-        <a href="{% url 'web:connect' %}">Connect</a>
-    </div>
-    <div>
-        {% if account_names %}
-            {% for name in account_names %}
-                <a href="{% url 'web:account' name %}">{{name}}</a><br>
-            {% endfor %}
-        {% endif %}
-    </div>
-</body>
-
-</html>
+{% block content %}
+{% if account_names %}
+    {% for name in account_names %}
+        <a href="{% url 'web:account' name %}">{{name}}</a><br>
+    {% endfor %}
+{% endif %}
+{% endblock content %}
