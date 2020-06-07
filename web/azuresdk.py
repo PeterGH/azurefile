@@ -63,3 +63,17 @@ def get_account(name, key=''):
 def get_account_names():
     return list(storageAccountCache)
 
+def get_path_components(path):
+    print('Split {0}', path)
+    components = path.split('/')
+    last_component = { path: components[-1] }
+    parent_components = {}
+    p = ''
+    for component in components[:-1]:
+        if not p:
+            p = component
+        else:
+            p = p + '/' + component
+        parent_components[p] = component
+    return parent_components, last_component
+

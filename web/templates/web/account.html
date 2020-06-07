@@ -1,7 +1,7 @@
 {% extends "web/base.html" %}
 
 {% block content %}
-<p>{{account_url}}</p>
+<a href="{% url 'web:account' account_name %}">{{account_url}}</a><br>
 {% for share in share_list %}
     <a href="{% url 'web:share' account_name share %}">{{share}}</a><br>
 {% endfor %}

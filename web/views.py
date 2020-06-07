@@ -32,31 +32,38 @@ def share(request, account_name, share_name):
     directories, files = share.get_directories_and_files()
     context = {
         'account_name': account.name,
+        'account_url': account.url,
         'share_name': share.name,
-        'share_url': share.url,
         'directory_list': directories,
         'file_list': files
     }
     return render(request, 'web/share.html', context)
 
 def file(request, account_name, share_name, file_path):
+    account = azuresdk.get_account(account_name)
+    share = account.get_share(share_name)
+    parent_components, last_component = azuresdk.get_path_components(file_path)
     context = {
-        'account_name': account_name,
-        'share_name': share_name,
-        'file_path': file_path
+        'account_name': account.name,
+        'account_url': account.url,
+        'share_name': share.name,
+        'parent_components': parent_components,
+        'last_component': last_component
     }
     return render(request, 'web/file.html', context)
 
 def directory(request, account_name, share_name, directory_path):
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
+    parent_components, last_component = azuresdk.get_path_components(directory_path)
     directory = share.get_directory(directory_path)
     directories, files = directory.get_directories_and_files()
     context = {
         'account_name': account.name,
+        'account_url': account.url,
         'share_name': share.name,
-        'directory_path': directory.directory_path,
-        'directory_url': directory.url,
+        'parent_components': parent_components,
+        'last_component': last_component,
         'directory_dict': directories,
         'file_dict': files
     }
