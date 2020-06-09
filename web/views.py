@@ -16,7 +16,7 @@ def connect(request):
         azuresdk.get_account(name=request.POST['accountName'], key=request.POST['accountKey'])
         return index(request)
 
-def account(request, account_name):
+def get_account(request, account_name):
     account = azuresdk.get_account(account_name)
     shares = account.get_share_names()
     context = {
@@ -26,7 +26,7 @@ def account(request, account_name):
     }
     return render(request, 'web/account.html', context)
 
-def share(request, account_name, share_name):
+def get_share(request, account_name, share_name):
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
     directories, files = share.get_directories_and_files()
@@ -39,7 +39,18 @@ def share(request, account_name, share_name):
     }
     return render(request, 'web/share.html', context)
 
-def file(request, account_name, share_name, file_path):
+def create_share(request, account_name):
+    if request.method == 'GET':
+        context = {
+            'account_name': account_name
+        }
+        return render(request, 'web/create_share.html', context)
+    elif request.method == 'POST':
+        account = azuresdk.get_account(account_name)
+        account.create_share(name=request.POST['shareName'])
+        return get_account(request, account_name)
+
+def get_file(request, account_name, share_name, file_path):
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
     parent_components, last_component = azuresdk.get_path_components(file_path)
@@ -52,7 +63,7 @@ def file(request, account_name, share_name, file_path):
     }
     return render(request, 'web/file.html', context)
 
-def directory(request, account_name, share_name, directory_path):
+def get_directory(request, account_name, share_name, directory_path):
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
     parent_components, last_component = azuresdk.get_path_components(directory_path)

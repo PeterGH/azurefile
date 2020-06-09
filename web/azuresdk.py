@@ -13,6 +13,9 @@ class AzureStorageAccount:
     def get_share(self, name):
         share = self._client.get_share_client(name)
         return AzureStorageShare(account=self, name=name, client=share)
+    
+    def create_share(self, name):
+        self._client.create_share(share_name=name)
 
 class AzureStorageShare:
     def __init__(self, account, name, client):

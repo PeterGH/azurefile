@@ -1,0 +1,10 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+<form action="{% url 'web:create_share' account_name %}" method="POST">
+    {% csrf_token %}
+    <label for="shareName">Share Name:</label><br>
+    <input type="text" name="shareName" id="shareName"><br>
+    <input type="submit" value="Create">
+</form>
+{% endblock content %}

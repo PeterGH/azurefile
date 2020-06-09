@@ -1,5 +1,10 @@
 {% extends "web/base.html" %}
 
+{% block menu %}
+{{ block.super }}
+<a href="{% url 'web:create_share' account_name %}">Create Share</a>
+{% endblock menu %}
+
 {% block content %}
 <a href="{% url 'web:account' account_name %}">{{account_url}}</a><br>
 {% for share in share_list %}
