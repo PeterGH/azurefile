@@ -4,12 +4,11 @@ from . import views
 app_name = 'web'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('connect', views.connect, name='connect'),
-    path('account/<account_name>', views.get_account, name='account'),
-    path('account/<account_name>/create_share', views.create_share, name='create_share'),
-    path('account/<account_name>/share/<share_name>', views.get_share, name='share'),
-    path('account/<account_name>/share/<share_name>/file/<path:file_path>', views.get_file, name='file'),
-    path('account/<account_name>/share/<share_name>/directory/<path:directory_path>', views.get_directory, name='directory'),
-    path('mount/', views.mount, name='mount')
+    path('', views.index_view, name='index'),
+    path('connect', views.connect_view, name='connect'),
+    path('account/<account_name>', views.account_view, name='account'),
+    path('account/<account_name>/share/<share_name>', views.share_view, name='share'),
+    path('account/<account_name>/share/<share_name>/file/<path:file_path>', views.file_view, name='file'),
+    path('account/<account_name>/share/<share_name>/directory/<path:directory_path>', views.directory_view, name='directory'),
+    path('mount/', views.mount_view, name='mount')
 ]

@@ -2,7 +2,7 @@
 
 {% block menu %}
 {{ block.super }}
-<a href="{% url 'web:create_share' account_name %}">Create Share</a>
+<a href="{% url 'web:account' account_name %}?action=create_share">Create Share</a>
 {% endblock menu %}
 
 {% block content %}

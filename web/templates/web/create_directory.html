@@ -1,0 +1,14 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+{% if directory_path %}
+<form action="{% url 'web:directory' account_name share_name directory_path %}?action=create_directory" method="POST">
+{% else %}
+<form action="{% url 'web:share' account_name share_name %}?action=create_directory" method="POST">
+{% endif %}
+    {% csrf_token %}
+    <label for="directoryName">Directory Name:</label><br>
+    <input type="text" name="directoryName" id="directoryName"><br>
+    <input type="submit" value="Create">
+</form>
+{% endblock content %}

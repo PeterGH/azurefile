@@ -17,6 +17,9 @@ class AzureStorageAccount:
     def create_share(self, name):
         self._client.create_share(share_name=name)
 
+    def delete_share(self, name):
+        self._client.delete_share(share_name=name)
+
 class AzureStorageShare:
     def __init__(self, account, name, client):
         self.account = account
@@ -38,6 +41,9 @@ class AzureStorageShare:
         directory = self._client.get_directory_client(name)
         return AzureStorageDirectory(share=self, name=name, client=directory)
 
+    def create_directory(self, name):
+        self._client.create_directory(directory_name=name)
+
 class AzureStorageDirectory:
     def __init__(self, share, name, client):
         self.share = share
@@ -56,6 +62,9 @@ class AzureStorageDirectory:
                 files[item['name']] = self._client.directory_path + '/' + item['name']
         return directories, files
 
+    def create_directory(self, name):
+        self._client.create_subdirectory(directory_name=name)
+
 storageAccountCache = {}
 
 def get_account(name, key=''):
@@ -67,7 +76,6 @@ def get_account_names():
     return list(storageAccountCache)
 
 def get_path_components(path):
-    print('Split {0}', path)
     components = path.split('/')
     last_component = { path: components[-1] }
     parent_components = {}

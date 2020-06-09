@@ -2,22 +2,35 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from . import azuresdk
 
-def index(request):
+def index_view(request):
     account_names = azuresdk.get_account_names()
     context = {
         'account_names': account_names
     }
     return render(request, 'web/index.html', context)
 
-def connect(request):
+def connect_view(request):
     if request.method == 'GET':
         return render(request, 'web/connect.html')
     elif request.method == 'POST':
         azuresdk.get_account(name=request.POST['accountName'], key=request.POST['accountKey'])
-        return index(request)
+        return index_view(request)
 
-def get_account(request, account_name):
+def account_view(request, account_name):
+    if request.method == 'GET' and request.GET.get('action') == 'create_share':
+        context = {
+            'account_name': account_name
+        }
+        return render(request, 'web/create_share.html', context)
     account = azuresdk.get_account(account_name)
+    if request.method == 'POST' and request.GET.get('action') == 'create_share':
+        try:
+            account.create_share(name=request.POST['shareName'])
+        except BaseException as error:
+            context = {
+                'error': error
+            }
+            return render(request, 'web/error.html', context)
     shares = account.get_share_names()
     context = {
         'account_name': account.name,
@@ -26,9 +39,32 @@ def get_account(request, account_name):
     }
     return render(request, 'web/account.html', context)
 
-def get_share(request, account_name, share_name):
+def share_view(request, account_name, share_name):
+    if request.method == 'GET' and request.GET.get('action') == 'create_directory':
+        context = {
+            'account_name': account_name,
+            'share_name': share_name
+        }
+        return render(request, 'web/create_directory.html', context)    
     account = azuresdk.get_account(account_name)
+    if request.method == 'GET' and request.GET.get('action') == 'delete':
+        try:
+            account.delete_share(name=share_name)
+            return account_view(request, account_name)
+        except BaseException as error:
+            context = {
+                'error': error
+            }
+            return render(request, 'web/error.html', context)
     share = account.get_share(share_name)
+    if request.method == 'POST' and request.GET.get('action') == 'create_directory':
+        try:
+            share.create_directory(name=request.POST['directoryName'])
+        except BaseException as error:
+            context = {
+                'error': error
+            }
+            return render(request, 'web/error.html', context)
     directories, files = share.get_directories_and_files()
     context = {
         'account_name': account.name,
@@ -39,18 +75,7 @@ def get_share(request, account_name, share_name):
     }
     return render(request, 'web/share.html', context)
 
-def create_share(request, account_name):
-    if request.method == 'GET':
-        context = {
-            'account_name': account_name
-        }
-        return render(request, 'web/create_share.html', context)
-    elif request.method == 'POST':
-        account = azuresdk.get_account(account_name)
-        account.create_share(name=request.POST['shareName'])
-        return get_account(request, account_name)
-
-def get_file(request, account_name, share_name, file_path):
+def file_view(request, account_name, share_name, file_path):
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
     parent_components, last_component = azuresdk.get_path_components(file_path)
@@ -63,9 +88,25 @@ def get_file(request, account_name, share_name, file_path):
     }
     return render(request, 'web/file.html', context)
 
-def get_directory(request, account_name, share_name, directory_path):
+def directory_view(request, account_name, share_name, directory_path):
+    if request.method == 'GET' and request.GET.get('action') == 'create_directory':
+        context = {
+            'account_name': account_name,
+            'share_name': share_name,
+            'directory_path': directory_path
+        }
+        return render(request, 'web/create_directory.html', context)
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
+    if request.method == 'POST' and request.GET.get('action') == 'create_directory':
+        try:
+            directory = share.get_directory(directory_path)
+            directory.create_directory(name=request.POST['directoryName'])
+        except BaseException as error:
+            context = {
+                'error': error
+            }
+            return render(request, 'web/error.html', context)
     parent_components, last_component = azuresdk.get_path_components(directory_path)
     directory = share.get_directory(directory_path)
     directories, files = directory.get_directories_and_files()
@@ -73,6 +114,7 @@ def get_directory(request, account_name, share_name, directory_path):
         'account_name': account.name,
         'account_url': account.url,
         'share_name': share.name,
+        'directory_path': directory.directory_path,
         'parent_components': parent_components,
         'last_component': last_component,
         'directory_dict': directories,
@@ -80,5 +122,5 @@ def get_directory(request, account_name, share_name, directory_path):
     }
     return render(request, 'web/directory.html', context)
 
-def mount(request):
+def mount_view(request):
     return render(request, 'web/mount.html')
