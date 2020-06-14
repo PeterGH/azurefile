@@ -65,6 +65,9 @@ class AzureStorageDirectory:
     def create_directory(self, name):
         self._client.create_subdirectory(directory_name=name)
 
+    def delete_directory(self):
+        self._client.delete_directory()
+
 storageAccountCache = {}
 
 def get_account(name, key=''):
@@ -87,4 +90,11 @@ def get_path_components(path):
             p = p + '/' + component
         parent_components[p] = component
     return parent_components, last_component
+
+def get_path_parent(path):
+    i = path.rfind('/')
+    if i == -1:
+        return ''
+    else:
+        return path[:i]
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from . import azuresdk
 
@@ -98,9 +98,25 @@ def directory_view(request, account_name, share_name, directory_path):
         return render(request, 'web/create_directory.html', context)
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
+    directory = share.get_directory(directory_path)
+    if request.method == 'GET' and request.GET.get('action') == 'delete':
+        try:
+            directory.delete_directory()
+            directory_path = azuresdk.get_path_parent(directory_path)
+            if directory_path == '':
+                # Cannot remove ?action=delete from request by
+                # calling request.GET.pop('action') because request.GET is immutable
+                # so cannot call share_view directly
+                return redirect('web:share', account_name=account_name, share_name=share_name)
+            else:
+                directory = share.get_directory(directory_path)
+        except BaseException as error:
+            context = {
+                'error': error
+            }
+            return render(request, 'web/error.html', context)
     if request.method == 'POST' and request.GET.get('action') == 'create_directory':
         try:
-            directory = share.get_directory(directory_path)
             directory.create_directory(name=request.POST['directoryName'])
         except BaseException as error:
             context = {
@@ -108,7 +124,6 @@ def directory_view(request, account_name, share_name, directory_path):
             }
             return render(request, 'web/error.html', context)
     parent_components, last_component = azuresdk.get_path_components(directory_path)
-    directory = share.get_directory(directory_path)
     directories, files = directory.get_directories_and_files()
     context = {
         'account_name': account.name,
