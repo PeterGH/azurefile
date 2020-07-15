@@ -9,4 +9,8 @@
 {% for path, name in last_component.items %}
     <a href="{% url 'web:file' account_name share_name path %}">{{name}}</a><br>
 {% endfor %}
+<div>
+    <label for="fileContent">File Content</label>
+    <textarea id="fileContent" name="fileContent" rows="50" cols="100" readonly>{{file_content}}</textarea>
+</div>
 {% endblock content %}

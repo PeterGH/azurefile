@@ -45,7 +45,13 @@ def share_view(request, account_name, share_name):
             'account_name': account_name,
             'share_name': share_name
         }
-        return render(request, 'web/create_directory.html', context)    
+        return render(request, 'web/create_directory.html', context)
+    if request.method == 'GET' and request.GET.get('action') == 'upload_file':
+        context = {
+            'account_name': account_name,
+            'share_name': share_name
+        }
+        return render(request, 'web/upload_file.html', context)
     account = azuresdk.get_account(account_name)
     if request.method == 'GET' and request.GET.get('action') == 'delete':
         try:
@@ -65,6 +71,8 @@ def share_view(request, account_name, share_name):
                 'error': error
             }
             return render(request, 'web/error.html', context)
+    if request.method == 'POST' and request.GET.get('action') == 'upload_file':
+        print(request.POST)
     directories, files = share.get_directories_and_files()
     context = {
         'account_name': account.name,
@@ -79,12 +87,21 @@ def file_view(request, account_name, share_name, file_path):
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
     parent_components, last_component = azuresdk.get_path_components(file_path)
+    file = share.get_file(file_path)
+    try:
+        file_content = file.get_content_as_text()
+    except BaseException as error:
+        context = {
+            'error': error
+        }
+        return render(request, 'web/error.html', context)
     context = {
         'account_name': account.name,
         'account_url': account.url,
         'share_name': share.name,
         'parent_components': parent_components,
-        'last_component': last_component
+        'last_component': last_component,
+        'file_content': file_content
     }
     return render(request, 'web/file.html', context)
 

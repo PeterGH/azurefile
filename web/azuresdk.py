@@ -44,6 +44,10 @@ class AzureStorageShare:
     def create_directory(self, name):
         self._client.create_directory(directory_name=name)
 
+    def get_file(self, name):
+        file = self._client.get_file_client(name)
+        return AzureStorageFile(share=self, name=name, client=file)
+
 class AzureStorageDirectory:
     def __init__(self, share, name, client):
         self.share = share
@@ -67,6 +71,19 @@ class AzureStorageDirectory:
 
     def delete_directory(self):
         self._client.delete_directory()
+
+class AzureStorageFile:
+    def __init__(self, share, name, client):
+        self.share = share
+        self.name = name
+        self.url = self.share.url + '/' + self.name
+        self._client = client
+        self.file_path = self._client.file_path
+
+    def get_content_as_text(self):
+        stream = self._client.download_file()
+        return stream.content_as_text()
+
 
 storageAccountCache = {}
 
