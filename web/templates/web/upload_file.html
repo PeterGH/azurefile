@@ -2,15 +2,12 @@
 
 {% block content %}
 {% if directory_path %}
-<form action="{% url 'web:directory' account_name share_name directory_path %}?action=upload_file" method="POST">
+<form action="{% url 'web:directory' account_name share_name directory_path %}?action=upload_file" method="POST" enctype="multipart/form-data">
 {% else %}
-<form action="{% url 'web:share' account_name share_name %}?action=upload_file" method="POST">
+<form action="{% url 'web:share' account_name share_name %}?action=upload_file" method="POST" enctype="multipart/form-data">
 {% endif %}
     {% csrf_token %}
-    <label for="fileName">File Name:</label><br>
-    <input type="text" name="fileName" id="fileName"><br>
-    <label for="selectFile">Select File:</label><br>
-    <input type="file" name="selectFile" id="selectFile" multiple><br>
+    {{ form }}
     <input type="submit" value="Upload">
 </form>
 {% endblock content %}

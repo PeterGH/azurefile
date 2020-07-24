@@ -48,6 +48,10 @@ class AzureStorageShare:
         file = self._client.get_file_client(name)
         return AzureStorageFile(share=self, name=name, client=file)
 
+    def upload_file(self, name, data):
+        file = self._client.get_file_client(name)
+        file.upload_file(data)
+
 class AzureStorageDirectory:
     def __init__(self, share, name, client):
         self.share = share
@@ -71,6 +75,10 @@ class AzureStorageDirectory:
 
     def delete_directory(self):
         self._client.delete_directory()
+
+    def upload_file(self, name, data):
+        file = self._client.get_file_client(name)
+        file.upload_file(data)
 
 class AzureStorageFile:
     def __init__(self, share, name, client):

@@ -1,6 +1,11 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
+from django import forms
 from . import azuresdk
+
+class UploadFileForm(forms.Form):
+    file_name = forms.CharField(label='File Name', max_length=255)
+    file = forms.FileField()
 
 def index_view(request):
     account_names = azuresdk.get_account_names()
@@ -49,7 +54,8 @@ def share_view(request, account_name, share_name):
     if request.method == 'GET' and request.GET.get('action') == 'upload_file':
         context = {
             'account_name': account_name,
-            'share_name': share_name
+            'share_name': share_name,
+            'form': UploadFileForm()
         }
         return render(request, 'web/upload_file.html', context)
     account = azuresdk.get_account(account_name)
@@ -73,6 +79,14 @@ def share_view(request, account_name, share_name):
             return render(request, 'web/error.html', context)
     if request.method == 'POST' and request.GET.get('action') == 'upload_file':
         print(request.POST)
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            share.upload_file(form.cleaned_data['file_name'], request.FILES['file'])
+        else:
+            context = {
+                'error': 'Invalid file upload'
+            }
+            return render(request, 'web/error.html', context)
     directories, files = share.get_directories_and_files()
     context = {
         'account_name': account.name,
@@ -113,6 +127,14 @@ def directory_view(request, account_name, share_name, directory_path):
             'directory_path': directory_path
         }
         return render(request, 'web/create_directory.html', context)
+    if request.method == 'GET' and request.GET.get('action') == 'upload_file':
+        context = {
+            'account_name': account_name,
+            'share_name': share_name,
+            'directory_path': directory_path,
+            'form': UploadFileForm()
+        }
+        return render(request, 'web/upload_file.html', context)
     account = azuresdk.get_account(account_name)
     share = account.get_share(share_name)
     directory = share.get_directory(directory_path)
@@ -138,6 +160,16 @@ def directory_view(request, account_name, share_name, directory_path):
         except BaseException as error:
             context = {
                 'error': error
+            }
+            return render(request, 'web/error.html', context)
+    if request.method == 'POST' and request.GET.get('action') == 'upload_file':
+        print(request.POST)
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            directory.upload_file(form.cleaned_data['file_name'], request.FILES['file'])
+        else:
+            context = {
+                'error': 'Invalid file upload'
             }
             return render(request, 'web/error.html', context)
     parent_components, last_component = azuresdk.get_path_components(directory_path)

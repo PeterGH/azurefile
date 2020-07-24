@@ -4,6 +4,7 @@
 {{ block.super }}
 <a href="{% url 'web:directory' account_name share_name directory_path %}?action=delete">Delete Directory</a>
 <a href="{% url 'web:directory' account_name share_name directory_path %}?action=create_directory">Create Directory</a>
+<a href="{% url 'web:directory' account_name share_name directory_path %}?action=upload_file">Upload File</a>
 {% endblock menu %}
 
 {% block content %}
