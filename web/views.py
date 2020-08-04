@@ -102,6 +102,20 @@ def file_view(request, account_name, share_name, file_path):
     share = account.get_share(share_name)
     parent_components, last_component = azuresdk.get_path_components(file_path)
     file = share.get_file(file_path)
+    if request.method == 'GET' and request.GET.get('action') == 'delete':
+        try:
+            file.delete_file()
+            parent = azuresdk.get_path_parent(file_path)
+            if parent == '':
+                return redirect('web:share', account_name=account_name, share_name=share_name)
+            else:
+                return redirect('web:directory', account_name=account_name, share_name=share_name,
+                                directory_path=parent)
+        except BaseException as error:
+            context = {
+                'error': error
+            }
+            return render(request, 'web/error.html', context)
     try:
         file_content = file.get_content_as_text()
     except BaseException as error:

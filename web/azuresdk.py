@@ -92,6 +92,9 @@ class AzureStorageFile:
         stream = self._client.download_file()
         return stream.content_as_text()
 
+    def delete_file(self):
+        self._client.delete_file()
+
 
 storageAccountCache = {}
 

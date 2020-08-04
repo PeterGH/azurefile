@@ -1,5 +1,12 @@
 {% extends "web/base.html" %}
 
+{% block menu %}
+{{ block.super }}
+{% for path, name in last_component.items %}
+    <a href="{% url 'web:file' account_name share_name path %}?action=delete">Delete File</a>
+{% endfor %}
+{% endblock menu %}
+
 {% block content %}
 <a href="{% url 'web:account' account_name %}">{{account_url}}/</a>
 <a href="{% url 'web:share' account_name share_name %}">{{share_name}}/</a>
