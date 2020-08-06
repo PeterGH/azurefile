@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse
 from django import forms
 from . import azuresdk
 
@@ -111,6 +111,18 @@ def file_view(request, account_name, share_name, file_path):
             else:
                 return redirect('web:directory', account_name=account_name, share_name=share_name,
                                 directory_path=parent)
+        except BaseException as error:
+            context = {
+                'error': error
+            }
+            return render(request, 'web/error.html', context)
+    if request.method == 'GET' and request.GET.get('action') == 'download':
+        try:
+            response = HttpResponse(file.get_chunks(), content_type='application/octet-stream')
+            response['Content-Disposition'] = 'attachement; filename=' + azuresdk.get_path_last_component(file_path)
+            return response
+            # return FileResponse(file.get_chunks(), as_attachment=True,
+            #                     filename=azuresdk.get_path_last_component(file_path))
         except BaseException as error:
             context = {
                 'error': error

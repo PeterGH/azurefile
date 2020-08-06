@@ -4,6 +4,7 @@
 {{ block.super }}
 {% for path, name in last_component.items %}
     <a href="{% url 'web:file' account_name share_name path %}?action=delete">Delete File</a>
+    <a href="{% url 'web:file' account_name share_name path %}?action=download">Download File</a>
 {% endfor %}
 {% endblock menu %}
 

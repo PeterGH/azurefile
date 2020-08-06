@@ -92,6 +92,10 @@ class AzureStorageFile:
         stream = self._client.download_file()
         return stream.content_as_text()
 
+    def get_chunks(self):
+        stream = self._client.download_file()
+        return stream.chunks()
+
     def delete_file(self):
         self._client.delete_file()
 
@@ -125,4 +129,11 @@ def get_path_parent(path):
         return ''
     else:
         return path[:i]
+
+def get_path_last_component(path):
+    i = path.rfind('/')
+    if i == -1:
+        return path
+    else:
+        return path[i + 1:]
 
