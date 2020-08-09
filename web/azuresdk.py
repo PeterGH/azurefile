@@ -52,6 +52,15 @@ class AzureStorageShare:
         file = self._client.get_file_client(name)
         file.upload_file(data)
 
+    def mount(self):
+        import os
+        error_code = os.system('mkdir /mnt/' + self.name)
+        if error_code != 0:
+            # divide by 256.
+            # system returns an error code in the same format as returned by os.wait()
+            error_code //= 256
+            raise OSError(error_code)
+
 class AzureStorageDirectory:
     def __init__(self, share, name, client):
         self.share = share

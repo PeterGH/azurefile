@@ -1,7 +1,7 @@
 {% extends "web/base.html" %}
 
 {% block content %}
-<form action="{% url 'web:mount' %}" method="POST">
+<form action="{% url 'web:share' account_name share_name %}?action=mount" method="POST">
     {% csrf_token %}
     <input type="submit" value="Mount">
 </form>

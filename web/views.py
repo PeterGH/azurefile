@@ -74,6 +74,12 @@ def share_view(request, account_name, share_name):
             'form': UploadFileForm()
         }
         return render(request, 'web/upload_file.html', context)
+    if is_get(request, action='mount'):
+        context = {
+            'account_name': account_name,
+            'share_name': share_name
+        }
+        return render(request, 'web/mount.html', context)
     account = azuresdk.get_account(account_name)
     if is_get(request, action='delete'):
         try:
@@ -82,6 +88,12 @@ def share_view(request, account_name, share_name):
         except BaseException as error:
             return render_error(request, error)
     share = account.get_share(share_name)
+    if is_post(request, action='mount'):
+        try:
+            share.mount()
+            return redirect('smb:share', share_name=share_name)
+        except BaseException as error:
+            return render_error(request, error)
     if is_post(request, action='create_directory'):
         try:
             share.create_directory(name=request.POST['directoryName'])
